@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { SocketContext } from "../socketContext";
 
 const SocketConnector = () => {
     const [url, setUrl] = useState('');
@@ -6,6 +7,8 @@ const SocketConnector = () => {
     const [domain, setDomain] = useState('');
     const [port, setPort] = useState('');
     const [path, setPath] = useState('');
+
+    let { socketObj } = useContext(SocketContext);
 
     useEffect(() => {
         let url = connType === '0' ? 'ws' : 'wss';
@@ -42,8 +45,13 @@ const SocketConnector = () => {
         setPath(value);
     }
 
+    const handleConnect = () => {
+        socketObj = new WebSocket(url);
+        console.log(socketObj);
+    }
+
     return (
-        <div className="flex flex-row flex-wrap mx-4 h-36 border mt-4 rounded-md">
+        <div className="flex flex-row flex-wrap mx-4 h-40 border mt-4 rounded-md">
             <div className="flex flex-row flex-wrap w-full">
                 <div className="p-2 w-2/12 text-center">Secure</div>
                 <div className="p-2 w-1/12 text-center"></div>
@@ -55,28 +63,29 @@ const SocketConnector = () => {
             </div>
             <div className="flex flex-row flex-wrap w-full">
                 <div className="px-2 pb-2 w-2/12 text-center">
-                    <select className="rounded-md text-black border-0 w-full h-full" value={connType} onChange={(e) => handleConnTypeChange(e.target.value)}>
+                    <select className="select select-bordered w-full max-w-xs" value={connType} onChange={(e) => handleConnTypeChange(e.target.value)}>
                         <option value="0">Non-Secure (WS)</option>
                         <option value="1">Secure (WSS)</option>
                     </select>
                 </div>
+
                 <div className="p-2 w-1/12 text-center">://</div>
                 <div className="px-2 pb-2 w-4/12 text-center">
-                    <input type="text" name="domain" className="rounded-md text-black border-0 w-full h-full" value={domain} onChange={(e) => handleDomainChange(e.target.value)}/>
+                    <input type="text" name="domain" placeholder="Domain" className="input input-bordered w-full max-w-xs" value={domain} onChange={(e) => handleDomainChange(e.target.value)}/>
                 </div>
                 <div className="p-2 w-1/12 text-center">:</div>
                 <div className="px-2 pb-2 w-1/12 text-center">
-                    <input type="text" name="port" className="rounded-md text-black border-0 w-full h-full" value={port} onChange={(e) => handlePortChange(e.target.value)}/>
+                    <input type="text" name="port" placeholder="Port" className="input input-bordered w-full max-w-xs" value={port} onChange={(e) => handlePortChange(e.target.value)} />
                 </div>
                 <div className="p-2 w-1/12 text-center">/</div>
                 <div className="px-2 pb-2 w-2/12 text-center">
-                    <input type="text" name="path" className="rounded-md text-black border-0 w-full h-full" value={path} onChange={(e) => handlePathChange(e.target.value)}/>
+                    <input type="text" name="path" placeholder="Path" className="input input-bordered w-full max-w-xs" value={path} onChange={(e) => handlePathChange(e.target.value)} />
                 </div>
             </div>
             <div className="flex flex-row flex-wrap justify-center w-full py-2">
                 <div className="px-2 text-center">
                     <span className="px-2 font-semibold">{url}</span>
-                    <button className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">Connect</button>
+                    <button className="btn btn-primary" onClick={handleConnect}>Connect</button>
                 </div>
             </div>
 
