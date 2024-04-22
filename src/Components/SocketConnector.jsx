@@ -1,14 +1,12 @@
 import { useState, useEffect, useContext } from "react";
-import { SocketContext } from "../socketContext";
+import { ReadyState } from 'react-use-websocket';
 
-const SocketConnector = () => {
-    const [url, setUrl] = useState('');
+const SocketConnector = ({ inputURL, setInputURL}) => {
     const [connType, setConnType] = useState('0');
     const [domain, setDomain] = useState('');
     const [port, setPort] = useState('');
     const [path, setPath] = useState('');
-
-    let { socketObj } = useContext(SocketContext);
+    const [socketURL, setSocketURL] = useState('');
 
     useEffect(() => {
         let url = connType === '0' ? 'ws' : 'wss';
@@ -25,7 +23,12 @@ const SocketConnector = () => {
             url += '/' + path;
         }
 
-        setUrl(url);
+        setSocketURL(url);
+
+        if (isValidURL(url)) {
+            setInputURL(url);
+        }
+
     }, [connType, domain, port, path]);
 
 
@@ -45,23 +48,19 @@ const SocketConnector = () => {
         setPath(value);
     }
 
-    const handleConnect = () => {
-        socketObj = new WebSocket(url);
-        console.log(socketObj);
+    const isValidURL = (urlString) => {
+        const urlPattern = new RegExp(/^(ws|wss):\/\/([\w-]+(\.[\w-]+)+)(\/[\w.\/?%&=]*)$/);
+        return !!urlPattern.test(urlString);
     }
 
     return (
-        <div className="flex flex-row flex-wrap mx-4 h-40 border mt-4 rounded-md">
+        <div className="flex flex-row flex-wrap mx-4 border mt-4 rounded-md">
             <div className="flex flex-row flex-wrap w-full">
-                <div className="p-2 w-2/12 text-center">Secure</div>
-                <div className="p-2 w-1/12 text-center"></div>
-                <div className="p-2 w-4/12 text-center">Domain/IP</div>
-                <div className="p-2 w-1/12 text-center"></div>
-                <div className="p-2 w-1/12 text-center">Port</div>
-                <div className="p-2 w-1/12 text-center"></div>
-                <div className="p-2 w-2/12 text-center">Path</div>
+                <div className="px-2 py-2 w-full text-center">
+                    <h1 className="font-bold">Socket URL</h1>
+                </div>
             </div>
-            <div className="flex flex-row flex-wrap w-full">
+            <div className="flex flex-row flex-wrap w-full pt-2">
                 <div className="px-2 pb-2 w-2/12 text-center">
                     <select className="select select-bordered w-full max-w-xs" value={connType} onChange={(e) => handleConnTypeChange(e.target.value)}>
                         <option value="0">Non-Secure (WS)</option>
@@ -71,7 +70,7 @@ const SocketConnector = () => {
 
                 <div className="p-2 w-1/12 text-center">://</div>
                 <div className="px-2 pb-2 w-4/12 text-center">
-                    <input type="text" name="domain" placeholder="Domain" className="input input-bordered w-full max-w-xs" value={domain} onChange={(e) => handleDomainChange(e.target.value)}/>
+                    <input type="text" name="domain" placeholder="Domain" className="input input-bordered w-full max-w-xs" value={domain} onChange={(e) => handleDomainChange(e.target.value)} />
                 </div>
                 <div className="p-2 w-1/12 text-center">:</div>
                 <div className="px-2 pb-2 w-1/12 text-center">
@@ -84,8 +83,8 @@ const SocketConnector = () => {
             </div>
             <div className="flex flex-row flex-wrap justify-center w-full py-2">
                 <div className="px-2 text-center">
-                    <span className="px-2 font-semibold">{url}</span>
-                    <button className="btn btn-primary" onClick={handleConnect}>Connect</button>
+                    <span className="px-2 font-semibold">{socketURL}</span>
+                    {/* <button className="btn btn-primary" onClick={handleConnect}>{socketStatus === ReadyState.OPEN ? 'Connected' : 'Connect'}</button> */}
                 </div>
             </div>
 
