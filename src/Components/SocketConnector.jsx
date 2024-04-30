@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { ReadyState } from 'react-use-websocket';
 
-const SocketConnector = ({ inputURL, setInputURL}) => {
+const SocketConnector = ({ inputURL, setInputURL, handleSocketConnect, socket, socketState, disconnectSocket}) => {
     const [connType, setConnType] = useState('0');
     const [domain, setDomain] = useState('');
     const [port, setPort] = useState('');
@@ -84,7 +84,8 @@ const SocketConnector = ({ inputURL, setInputURL}) => {
             <div className="flex flex-row flex-wrap justify-center w-full py-2">
                 <div className="px-2 text-center">
                     <span className="px-2 font-semibold">{socketURL}</span>
-                    {/* <button className="btn btn-primary" onClick={handleConnect}>{socketStatus === ReadyState.OPEN ? 'Connected' : 'Connect'}</button> */}
+                    <button className="btn btn-primary mr-3" onClick={handleSocketConnect} disabled={socketState && socketState === 1 && 'disabled'}>{socketState && socketState === 1 ? 'Connected' : 'Connect'}</button>
+                    {socketState && socketState === 1 && <button className="btn btn-warning" onClick={disconnectSocket}>Disconnect</button>}
                 </div>
             </div>
 

@@ -2,22 +2,20 @@ import { useState} from "react";
 import jsSHA from "jssha";
 import { hash } from "../Utils/encrypt";
 
-const UserAuthenticator = ({ inputURL, setInputURL, connectSocket, socketStatus, sendAuthMessage}) => {
+const UserAuthenticator = ({ inputURL, setInputURL, socket, sendAuthMessage}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [encType, setEncType] = useState('-1');
     const [channelId, setChannelId] = useState('-1');
     
     const handleConnect = () => {
-        // connectSocket(socketURL);
-        // sendAuthMessage();
         const encryptedPassword = hash(password, encType, 'B64');
         sendAuthMessage(username, encryptedPassword, channelId);
     }
 
     return (
-        <div className="flex flex-row flex-wrap mx-4 border mt-4 rounded-md w-1/4">
-            <div className="flex flex-row flex-wrap w-full h-2">
+        <div className="flex flex-row flex-wrap ml-4 mr-2 border mt-4 rounded-md w-1/5">
+            <div className="flex flex-row flex-wrap w-full">
                 <div className="px-2 py-1 w-full text-center">
                     <h1 className="font-bold">Authenticate</h1>
                 </div>
@@ -55,7 +53,7 @@ const UserAuthenticator = ({ inputURL, setInputURL, connectSocket, socketStatus,
 
             <div className="flex flex-row flex-wrap w-full">
                 <div className="px-2 pb-2 justify-center text-center w-full">
-                    <button type="button" className="btn btn-primary" onClick={handleConnect}>Connect & Authenticate</button>
+                    <button type="button" className="btn btn-primary" onClick={handleConnect}>Authenticate</button>
                 </div>
             </div>
         </div>

@@ -18,3 +18,15 @@ const getShaHash = (str, algorithm, outputType) => {
     shaObj.update(str);
     return shaObj.getHash(outputType);
 }
+
+
+export const convertUnicodeToNativeString = function (unicodeString) {
+    if (unicodeString) {
+        return unicodeString.replace(/\\u[\dABCDEFabcdef][\dABCDEFabcdef][\dABCDEFabcdef][\dABCDEFabcdef]/g,
+            function (match) {
+                return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+            });
+    }
+
+    return unicodeString;
+};
