@@ -4,7 +4,7 @@ import MessageViewer from './MessageViewer';
 import CompulsaryRequests from './CompulsaryRequests';
 import SendMessage from './SendMessage';
 
-const AppBody = ({ inputURL, setInputURL, socket, sendAuthMessage, receivedMessageHistory, sentMessageHistory, getCustomerDetailsRequest}) => {
+const AppBody = ({ inputURL, setInputURL, socket, sendAuthMessage, receivedMessageHistory, sentMessageHistory, getCustomerDetailsRequest, sendCustomRequest}) => {
     return (
         <>
             <div className="flex flex-row w-full">
@@ -13,7 +13,7 @@ const AppBody = ({ inputURL, setInputURL, socket, sendAuthMessage, receivedMessa
                 <CompulsaryRequests getCustomerDetailsRequest={getCustomerDetailsRequest} receivedMessageHistory={receivedMessageHistory}></CompulsaryRequests>
             </div>
             <div className="flex flex-row w-full">
-                <SendMessage/>
+                <SendMessage sendCustomRequest={sendCustomRequest}/>
             </div>
             <div className="flex flex-row w-full">
                 <MessageViewer viewerName='Sent Messages' msgArray={sentMessageHistory}/>

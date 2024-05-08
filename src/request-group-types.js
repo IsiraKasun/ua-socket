@@ -9,8 +9,9 @@ export const messageGroups = {
         '10': 'Customer',
         '11': 'Subscription',
         '12': 'Rights Subscription',
-        '21': 'Mutual Fund',
-        '15': 'Customer Admin'
+        '15': 'Customer Admin',
+        '21': 'Mutual Fund'
+
 }
 
 
@@ -144,7 +145,13 @@ export const messgeTypes = {
                 '17': 'Subscription',
                 '21': 'Subscription List'
         },
-        '13': {
+        '15': {
+                '1': 'Preferred Language',
+                '4': 'Portfolio Name',
+                '34': 'Promotions',
+                '35': 'Invesment Plus Accept'
+        },
+        '21': {
                 '3': 'Fund Holdings',
                 '4': 'Nav Fund Date',
                 '5': 'Subscription Fee',
@@ -156,12 +163,5 @@ export const messgeTypes = {
                 '21': 'Terms And Conditions',
                 '22': 'FundList',
                 '23': 'VAT Amount'
-        },
-        '15': {
-                '1': 'Preferred Language',
-                '4': 'Portfolio Name',
-                '34': 'Promotions',
-                '35': 'Invesment Plus Accept',
-                'ComposeMessage': 37
         }
 }

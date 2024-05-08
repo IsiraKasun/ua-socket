@@ -119,11 +119,20 @@ function App() {
     });
   }
 
+  const sendCustomRequest = (reqObj) => {
+    const jsonObj = reqObj;
+
+    socket.current.send(JSON.stringify(jsonObj));
+    setSentMessageHistory((prevMsgHistory) => {
+      return [...prevMsgHistory].concat(jsonObj);
+    });
+  }
+
   return (
     <>
       <Header socketState={socketState} />
       <SocketConnector inputURL={inputURL} setInputURL={setInputURL} handleSocketConnect={handleSocketConnect} socket={socket.current} socketState={socketState} disconnectSocket={disconnectSocket} recentURLList={recentURLList} setRecentURLList={setRecentURLList}/>
-      <AppBody inputURL={inputURL} setInputURL={setInputURL} socket={socket.current} sendAuthMessage={sendAuthMessage} receivedMessageHistory={receivedMessageHistory} sentMessageHistory={sentMessageHistory} getCustomerDetailsRequest={getCustomerDetailsRequest}></AppBody>
+      <AppBody inputURL={inputURL} setInputURL={setInputURL} socket={socket.current} sendAuthMessage={sendAuthMessage} receivedMessageHistory={receivedMessageHistory} sentMessageHistory={sentMessageHistory} getCustomerDetailsRequest={getCustomerDetailsRequest} sendCustomRequest={sendCustomRequest}></AppBody>
     </>
   )
 }
