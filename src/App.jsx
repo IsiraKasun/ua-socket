@@ -3,8 +3,8 @@ import Header from './Components/AppHeader';
 import SocketConnector from './Components/SocketConnector';
 import React, { useState, useEffect, useRef } from 'react';
 import AppBody from './Components/AppBody';
-import store from './store';
-import { Provider } from 'react-redux';
+import { useSelector } from 'react-redux';
+
 
 
 const requestTemplate = {
@@ -33,71 +33,63 @@ const heartBeatTemplate = {
   }
 }
 
-const socketStates = {
-  state_0: 'Connecting',
-  state_1: 'Connected',
-  state_2: 'Closing',
-  state_3: 'Closed'
-}
-
-
-
 function App() {
   const [url, setUrl] = useState('');
   const [inputURL, setInputURL] = useState('ws://echo.websocket.org');
-  const [userId, setUserId] = useState('');
-  const [sessionId, setSessionId] = useState('');
-  const [heartBeat, setHeartBeat] = useState(heartBeatTemplate);
   const socket = useRef(null);
   const [socketState, setSocketState] = useState('');
-
-
-  // const { sendMessage, sendJsonMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(url, {
-  //   onOpen: () => { console.log('opened') },
-  //   onClose: () => { console.log('closed'); setUrl('ws://echo.websocket.org') },
-  //   heartbeat: {
-  //     message: heartBeatTemplate,
-  //     interval: 10000
-  //   }
-  // });
+  const userDetails = useSelector(state => state.userDetailsReducer);
+  const [recentURLList, setRecentURLList] = useState([]);
 
   const [receivedMessageHistory, setReceivedMessageHistory] = useState([]);
   const [sentMessageHistory, setSentMessageHistory] = useState([]);
 
   const handleSocketConnect = () => {
-      socket.current = new WebSocket(inputURL);
+    socket.current = new WebSocket(inputURL);
 
-      socket.current.onopen = () => {
-        console.log('Socket opened');
-        setSocketState(socket.current.readyState);
-      };
+    socket.current.onopen = () => {
+      console.log('Socket opened');
+      setSocketState(socket.current.readyState);
+      updateRecentURLs(inputURL);
+    };
 
-      socket.current.onclose = () => {
-        console.log('Socket closed');
-        setSocketState(socket.current.readyState);
-      };
+    socket.current.onclose = () => {
+      console.log('Socket closed');
+      setSocketState(socket.current.readyState);
+    };
 
-      socket.current.onmessage = (msg) => {
-        let message = msg.data;
-        setReceivedMessageHistory((prevRecevedMsgHistory) => {
-          return [...prevRecevedMsgHistory].concat(message);
-        })
-      };
+    socket.current.onmessage = (msg) => {
+      let message = msg.data;
+      setReceivedMessageHistory((prevRecevedMsgHistory) => {
+        return [...prevRecevedMsgHistory].concat(JSON.parse(message));
+      })
+    };
 
-      socket.current.onerror = (e) => {
-        console.log('Socket Error ' + e);
-        setSocketState(socket.current.readyState);
-      };
+    socket.current.onerror = (e) => {
+      console.log('Socket Error ' + e);
+      setSocketState(socket.current.readyState);
+    };
   };
 
   const disconnectSocket = () => {
     socket.current.close();
   }
 
+  const updateRecentURLs = (url) => {
+    let urls = localStorage.getItem('recentURLs') || '';
+        let urlArray = urls ? urls.split(',') : [];
+
+        if (!urlArray.includes(url)) {
+           urlArray.push(url);
+           let urlString = urlArray.join(',');
+           localStorage.setItem('recentURLs', urlString);
+        }
+  }
+
   const sendAuthMessage = (username, password, channelId) => {
     setUrl(inputURL);
 
-    let jsonObj = requestTemplate;
+    const jsonObj = JSON.parse(JSON.stringify(requestTemplate));
     jsonObj.HED.msgGrp = 5;
     jsonObj.HED.msgTyp = 1;
     jsonObj.HED.chnlId = parseInt(channelId, 10);
@@ -108,14 +100,31 @@ function App() {
     setSentMessageHistory((prevMsgHistory) => {
       return [...prevMsgHistory].concat(jsonObj);
     });
+
+  }
+
+  const getCustomerDetailsRequest = () => {
+    const jsonObj = JSON.parse(JSON.stringify(requestTemplate));
+    jsonObj.HED.msgGrp = 10;
+    jsonObj.HED.msgTyp = 3;
+    jsonObj.HED.chnlId = userDetails.channelId;
+    jsonObj.HED.usrId = userDetails.userId;
+    jsonObj.HED.sesnId = userDetails.sessionId;
+  
+    jsonObj.DAT.cusId = userDetails.userId;
+
+    socket.current.send(JSON.stringify(jsonObj));
+    setSentMessageHistory((prevMsgHistory) => {
+      return [...prevMsgHistory].concat(jsonObj);
+    });
   }
 
   return (
-    <Provider store={store}>
-      <Header socketState={socketState}/>
-      <SocketConnector inputURL={inputURL} setInputURL={setInputURL} handleSocketConnect={handleSocketConnect} socket={socket.current} socketState={socketState} disconnectSocket={disconnectSocket}/>
-      <AppBody inputURL={inputURL} setInputURL={setInputURL} socket={socket.current} sendAuthMessage={sendAuthMessage} receivedMessageHistory={receivedMessageHistory} sentMessageHistory={sentMessageHistory} heartBeat={heartBeat} setHeartBeat={setHeartBeat}></AppBody>
-    </Provider>
+    <>
+      <Header socketState={socketState} />
+      <SocketConnector inputURL={inputURL} setInputURL={setInputURL} handleSocketConnect={handleSocketConnect} socket={socket.current} socketState={socketState} disconnectSocket={disconnectSocket} recentURLList={recentURLList} setRecentURLList={setRecentURLList}/>
+      <AppBody inputURL={inputURL} setInputURL={setInputURL} socket={socket.current} sendAuthMessage={sendAuthMessage} receivedMessageHistory={receivedMessageHistory} sentMessageHistory={sentMessageHistory} getCustomerDetailsRequest={getCustomerDetailsRequest}></AppBody>
+    </>
   )
 }
 

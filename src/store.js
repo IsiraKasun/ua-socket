@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import socketStateReducer from './Reducers/socket-state-reducer'
+import userDetailsReducer from './Reducers/user-details-reducer'
 
 export default configureStore({
   reducer: {
-    socketStateReducer: socketStateReducer
+    userDetailsReducer: userDetailsReducer
   }
 })

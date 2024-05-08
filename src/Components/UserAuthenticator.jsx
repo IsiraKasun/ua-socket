@@ -1,5 +1,4 @@
 import { useState} from "react";
-import jsSHA from "jssha";
 import { hash } from "../Utils/encrypt";
 
 const UserAuthenticator = ({ inputURL, setInputURL, socket, sendAuthMessage}) => {
