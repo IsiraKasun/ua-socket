@@ -13,7 +13,7 @@ const MessageViewer = ({ viewerName, msgArray }) => {
             <div className="px-2 py-1 w-full items-start">
                 {[...msgArray].reverse().map((msg, index) => (
                     <Fragment key={index}>
-                        <div className="divider"></div>
+                        <div className="divider">{'Message Group - ' + msg.HED.msgGrp + ' / Message Type - ' + msg.HED.msgTyp}</div>
                         <JsonView key={index} collapsed={1} src={msg} />
                     </Fragment>
                 ))}
